@@ -10,7 +10,8 @@ const {
   getBookingsByDate,
   getBookingsByDateAndTime,
   getBookingsByUserId,
-  getBookingsByDateAndTerrain
+  getBookingsByDateAndTerrain,
+  getBookingsByDateAndName
 } = require("../controllers/bookingController");
 
 router.get("/getAll", getAll);
@@ -18,6 +19,8 @@ router.get("/getById/:Id", findOne);
 router.get("/getByUserId/:Id", getBookingsByUserId);
 router.post("/addByAdmin", addBookingByAdmin);
 router.post("/getByDate", getBookingsByDate);
+router.post("/getBookingsByDateAndName", getBookingsByDateAndName);
+
 router.post("/getByDateAndTerrain", getBookingsByDateAndTerrain);
 
 router.post("/getByDateAndTime", getBookingsByDateAndTime);

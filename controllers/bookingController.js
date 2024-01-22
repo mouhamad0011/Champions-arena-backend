@@ -178,6 +178,25 @@ const getBookingsByDateAndTime = async (req, res) => {
   }
 };
 
+const getBookingsByDateAndName = async (req, res) => {
+  const { terrainId, date } = req.body;
+  try {
+    const bookings = await Bookings.find({ date, terrainId })
+    .populate({
+      path : "userId",
+      model: "users",
+      select : "firstName"
+    })
+    res
+      .status(200)
+      .json({ message: "Bookings retrieved successfully", bookings });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Couldn't get all bookings", error: error.message });
+  }
+};
+
 const getBookingsByUserId = async (req, res) => {
   try {
     const bookings = await Bookings.find({ userId: req.params.Id }).populate({
@@ -281,4 +300,5 @@ module.exports = {
   deleteBooking,
   updateBooking,
   getBookingsByDate,
+  getBookingsByDateAndName
 };

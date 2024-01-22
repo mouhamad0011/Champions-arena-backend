@@ -107,11 +107,41 @@ const deleteUser = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
+    const { firstName, lastName, email, role } = req.body;
+    const { Id } = req.params
+    try {
+        if (!Id) throw Error("No id sent as parameter");
+        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { firstName, lastName, email, role });
+        if(!resultat)throw Error("Error while updating");
+        const user=await getUserById(Id);
+        res.status(200).json({ message: "Updating a user successfully" ,user});
+    } catch (error) {
+        res.status(500).json({ message: "Failed to update a user", error: error.message })
+    }
+}
+
+const updateProfile = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
     const { Id } = req.params
     try {
         if (!Id) throw Error("No id sent as parameter");
-        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { firstName, lastName, email, password });
+        const userToUpdate = await Users.findById({_id : Id});
+        if(userToUpdate.email !== email){
+            const existEmail = await Users.findOne({email});
+            if(existEmail){
+                return res.status(400).json({message : "email already exist"})
+            }
+        }
+        const salt = await bcrypt.genSalt(10);
+        var hashedPassword;
+        var resultat;
+        if(password){
+           hashedPassword = await bcrypt.hash(password, salt);
+           resultat = await Users.findByIdAndUpdate({ _id:Id }, { firstName, lastName, email, password:hashedPassword  });
+        }
+        else{
+           resultat = await Users.findByIdAndUpdate({ _id:Id }, { firstName, lastName, email  });
+        }
         if(!resultat)throw Error("Error while updating");
         const user=await getUserById(Id);
         res.status(200).json({ message: "Updating a user successfully" ,user});
@@ -171,4 +201,4 @@ const getUserById = async(Id)=>{
 //         res.status(500).json({ message: 'Failed to update the profile',error:error.message });
 //     }
 // }  
-module.exports = {findByRole, register, login, findOne, getAll, deleteUser, updateUser };
+module.exports = {updateProfile, findByRole, register, login, findOne, getAll, deleteUser, updateUser };
