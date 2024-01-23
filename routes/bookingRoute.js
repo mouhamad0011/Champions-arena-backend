@@ -13,6 +13,7 @@ const {
   getBookingsByDateAndTerrain,
   getBookingsByDateAndName
 } = require("../controllers/bookingController");
+const { authenticated } = require("../middlewares/auth");
 
 router.get("/getAll", getAll);
 router.get("/getById/:Id", findOne);
@@ -26,6 +27,6 @@ router.post("/getByDateAndTerrain", getBookingsByDateAndTerrain);
 router.post("/getByDateAndTime", getBookingsByDateAndTime);
 router.post("/addByUser", addBookingByUser);
 router.delete("/delete/:Id", deleteBooking);
-router.put("/update/:Id", updateBooking);
+router.put("/update/:Id", authenticated("admin"), updateBooking);
 
 module.exports = router;

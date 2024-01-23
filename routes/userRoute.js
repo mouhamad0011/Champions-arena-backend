@@ -10,14 +10,15 @@ const {
   updateUser,
   updateProfile
 } = require("../controllers/userController");
+const { authenticated } = require("../middlewares/auth");
 
 router.get("/getAll", getAll);
 router.get("/getById/:Id", findOne);
 router.post("/getByRole", findByRole);
 router.post("/login", login);
 router.post("/register", register);
-router.delete("/delete/:Id", deleteUser);
-router.put("/update/:Id", updateUser);
+router.delete("/delete/:Id",authenticated("admin"), deleteUser);
+router.put("/update/:Id",authenticated("admin"), updateUser);
 router.put("/updateProfile/:Id", updateProfile);
 
 
